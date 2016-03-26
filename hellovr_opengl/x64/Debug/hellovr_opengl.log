@@ -1,0 +1,37 @@
+﻿生成启动时间为 2016/3/25 17:38:48。
+     1>项目“C:\Users\jie_L\Desktop\Model_Viewer_v3\samples\hellovr_opengl\hellovr_opengl.vcxproj”在节点 2 上(Build 个目标)。
+     1>ClCompile:
+         E:\vs2013\VC\bin\x86_amd64\CL.exe /c /IC:\Users\jie_L\Desktop\Model_Viewer_v3\samples\packages\nupengl.core.0.1.0.1\build\native\../..//build/native/include/ /Zi /nologo /W3 /WX- /Od /D WIN32 /D _CRT_NONSTDC_NO_DEPRECATE /D _DEBUG /D _WINDOWS /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"x64\Debug\\" /Fd"x64\Debug\vc120.pdb" /Gd /TP /errorReport:prompt ..\shared\lodepng.cpp ..\shared\Matrices.cpp ..\shared\pathtools.cpp hellovr_opengl_main.cpp
+         hellovr_opengl_main.cpp
+     1>c:\users\jie_l\desktop\model_viewer_v3\samples\hellovr_opengl\Mesh.h(79): warning C4267: “参数”: 从“size_t”转换到“GLsizei”，可能丢失数据
+     1>hellovr_opengl_main.cpp(1354): warning C4267: “=”: 从“size_t”转换到“unsigned int”，可能丢失数据
+         pathtools.cpp
+         Matrices.cpp
+         lodepng.cpp
+     1>..\shared\lodepng.cpp(794): warning C4267: “参数”: 从“size_t”转换到“unsigned int”，可能丢失数据
+     1>..\shared\lodepng.cpp(806): warning C4267: “=”: 从“size_t”转换到“unsigned int”，可能丢失数据
+     1>..\shared\lodepng.cpp(824): warning C4267: “参数”: 从“size_t”转换到“unsigned int”，可能丢失数据
+     1>..\shared\lodepng.cpp(1432): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+     1>..\shared\lodepng.cpp(1436): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+     1>..\shared\lodepng.cpp(1508): warning C4267: “=”: 从“size_t”转换到“unsigned int”，可能丢失数据
+     1>..\shared\lodepng.cpp(3432): warning C4267: “参数”: 从“size_t”转换到“unsigned int”，可能丢失数据
+     1>..\shared\lodepng.cpp(4225): warning C4267: “=”: 从“size_t”转换到“unsigned int”，可能丢失数据
+     1>..\shared\lodepng.cpp(4273): warning C4267: “=”: 从“size_t”转换到“unsigned int”，可能丢失数据
+     1>..\shared\lodepng.cpp(4353): warning C4267: “=”: 从“size_t”转换到“unsigned int”，可能丢失数据
+     1>..\shared\lodepng.cpp(5274): warning C4267: “初始化”: 从“size_t”转换到“unsigned int”，可能丢失数据
+         正在生成代码...
+       Link:
+         E:\vs2013\VC\bin\x86_amd64\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\jie_L\Desktop\Model_Viewer_v3\samples\x64\Debug\hellovr_opengl.exe" /INCREMENTAL /NOLOGO C:\Users\jie_L\Desktop\Model_Viewer_v3\samples\packages\nupengl.core.0.1.0.1\build\native\../..//build/native/lib/x64\glew32.lib C:\Users\jie_L\Desktop\Model_Viewer_v3\samples\packages\nupengl.core.0.1.0.1\build\native\../..//build/native/lib/x64\glfw3dll.lib C:\Users\jie_L\Desktop\Model_Viewer_v3\samples\packages\nupengl.core.0.1.0.1\build\native\../..//build/native/lib/x64\freeglut.lib openvr_api.lib glew32d.lib SDL2.lib SDL2main.lib glu32.lib opengl32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib assimp.lib SOILd.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\jie_L\Desktop\Model_Viewer_v3\samples\x64\Debug\hellovr_opengl.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\jie_L\Desktop\Model_Viewer_v3\samples\x64\Debug\hellovr_opengl.lib" /MACHINE:X64 x64\Debug\lodepng.obj
+         x64\Debug\Matrices.obj
+         x64\Debug\pathtools.obj
+         x64\Debug\hellovr_opengl_main.obj
+     1>SOILd.lib(image_DXT.obj) : warning LNK4099: 未找到 PDB“vc120.pdb”(使用“SOILd.lib(image_DXT.obj)”或在“C:\Users\jie_L\Desktop\Model_Viewer_v3\samples\x64\Debug\vc120.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+     1>SOILd.lib(image_helper.obj) : warning LNK4099: 未找到 PDB“vc120.pdb”(使用“SOILd.lib(image_helper.obj)”或在“C:\Users\jie_L\Desktop\Model_Viewer_v3\samples\x64\Debug\vc120.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+     1>SOILd.lib(SOIL.obj) : warning LNK4099: 未找到 PDB“vc120.pdb”(使用“SOILd.lib(SOIL.obj)”或在“C:\Users\jie_L\Desktop\Model_Viewer_v3\samples\x64\Debug\vc120.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+     1>SOILd.lib(stb_image_aug.obj) : warning LNK4099: 未找到 PDB“vc120.pdb”(使用“SOILd.lib(stb_image_aug.obj)”或在“C:\Users\jie_L\Desktop\Model_Viewer_v3\samples\x64\Debug\vc120.pdb”中寻找)；正在链接对象，如同没有调试信息一样
+         hellovr_opengl.vcxproj -> C:\Users\jie_L\Desktop\Model_Viewer_v3\samples\x64\Debug\hellovr_opengl.exe
+     1>已完成生成项目“C:\Users\jie_L\Desktop\Model_Viewer_v3\samples\hellovr_opengl\hellovr_opengl.vcxproj”(Build 个目标)的操作。
+
+生成成功。
+
+已用时间 00:00:03.39

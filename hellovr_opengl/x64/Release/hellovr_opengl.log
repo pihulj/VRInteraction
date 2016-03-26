@@ -1,0 +1,25 @@
+﻿生成启动时间为 3/21/2016 7:52:17 PM。
+     1>项目“C:\Users\Yingliang Zhang\Documents\Visual Studio 2013\Projects\VirtualReality\Model_Viewer\samples\hellovr_opengl\hellovr_opengl.vcxproj”在节点 2 上(Rebuild 个目标)。
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\x86_amd64\CL.exe /c /Zi /nologo /W3 /WX- /O2 /Oi /GL /D WIN32 /D _CRT_NONSTDC_NO_DEPRECATE /D NDEBUG /D _WINDOWS /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"x64\Release\\" /Fd"x64\Release\vc120.pdb" /Gd /TP /errorReport:prompt ..\shared\lodepng.cpp ..\shared\Matrices.cpp ..\shared\pathtools.cpp hellovr_opengl_main.cpp
+         lodepng.cpp
+     1>..\shared\lodepng.cpp(794): warning C4267: “参数”: 从“size_t”转换到“unsigned int”，可能丢失数据
+     1>..\shared\lodepng.cpp(806): warning C4267: “=”: 从“size_t”转换到“unsigned int”，可能丢失数据
+     1>..\shared\lodepng.cpp(824): warning C4267: “参数”: 从“size_t”转换到“unsigned int”，可能丢失数据
+     1>..\shared\lodepng.cpp(1432): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+     1>..\shared\lodepng.cpp(1436): warning C4267: “=”: 从“size_t”转换到“int”，可能丢失数据
+     1>..\shared\lodepng.cpp(1508): warning C4267: “=”: 从“size_t”转换到“unsigned int”，可能丢失数据
+     1>..\shared\lodepng.cpp(3432): warning C4267: “参数”: 从“size_t”转换到“unsigned int”，可能丢失数据
+     1>..\shared\lodepng.cpp(4225): warning C4267: “=”: 从“size_t”转换到“unsigned int”，可能丢失数据
+     1>..\shared\lodepng.cpp(4273): warning C4267: “=”: 从“size_t”转换到“unsigned int”，可能丢失数据
+     1>..\shared\lodepng.cpp(4353): warning C4267: “=”: 从“size_t”转换到“unsigned int”，可能丢失数据
+     1>..\shared\lodepng.cpp(5274): warning C4267: “初始化”: 从“size_t”转换到“unsigned int”，可能丢失数据
+         Matrices.cpp
+         pathtools.cpp
+         hellovr_opengl_main.cpp
+     1>hellovr_opengl_main.cpp(3): fatal error C1083: 无法打开包括文件: “SDL.h”: No such file or directory
+     1>已完成生成项目“C:\Users\Yingliang Zhang\Documents\Visual Studio 2013\Projects\VirtualReality\Model_Viewer\samples\hellovr_opengl\hellovr_opengl.vcxproj”(Rebuild 个目标)的操作 - 失败。
+
+生成失败。
+
+已用时间 00:00:01.89

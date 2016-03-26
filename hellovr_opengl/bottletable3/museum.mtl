@@ -1,0 +1,72 @@
+# 3ds Max Wavefront OBJ Exporter v0.97b - (c)2007 guruware
+# File Created: 23.03.2016 17:49:56
+
+newmtl _Model_texture1
+	Ns 30.000002
+	Ni 1.500000
+	d 1.000000
+	Tr 0.000000
+	Tf 1.000000 1.000000 1.000000 
+	illum 2
+	Ka 0.000000 0.000000 0.000000
+	Kd 1.000000 1.000000 1.000000
+	Ks 0.000000 0.000000 0.000000
+	Ke 0.000000 0.000000 0.000000
+	map_Ka PackingResult2.jpg
+	map_Kd PackingResult2.jpg
+
+newmtl _TableDefault
+	Ns 256.000000
+	Ni 1.500000
+	d 1.000000
+	Tr 0.000000
+	Tf 1.000000 1.000000 1.000000 
+	illum 2
+	Ka 0.000000 0.000000 0.000000
+	Kd 0.800000 0.800000 0.800000
+	Ks 0.200000 0.200000 0.200000
+	Ke 0.000000 0.000000 0.000000
+	map_Ka Texture.JPG
+	map_Kd Texture.JPG
+
+newmtl Material__12
+	Ns 10.000000
+	Ni 1.500000
+	d 1.000000
+	Tr 0.000000
+	Tf 1.000000 1.000000 1.000000 
+	illum 2
+	Ka 0.588000 0.588000 0.588000
+	Kd 0.588000 0.588000 0.588000
+	Ks 0.000000 0.000000 0.000000
+	Ke 0.000000 0.000000 0.000000
+	map_Ka negy.jpg
+	map_Kd negy.jpg
+
+newmtl _Model_texture3
+	Ns 30.000002
+	Ni 1.500000
+	d 1.000000
+	Tr 0.000000
+	Tf 1.000000 1.000000 1.000000 
+	illum 2
+	Ka 0.000000 0.000000 0.000000
+	Kd 1.000000 1.000000 1.000000
+	Ks 0.000000 0.000000 0.000000
+	Ke 0.000000 0.000000 0.000000
+	map_Ka PackingResult.jpg
+	map_Kd PackingResult.jpg
+
+newmtl Material__11
+	Ns 68.000000
+	Ni 1.500000
+	d 1.000000
+	Tr 0.000000
+	Tf 1.000000 1.000000 1.000000 
+	illum 2
+	Ka 0.588235 0.588235 0.588235
+	Kd 0.588235 0.588235 0.588235
+	Ks 0.000000 0.000000 0.000000
+	Ke 0.488235 0.488235 0.488235
+	map_Ka zhenmian.jpg
+	map_Kd zhenmian.jpg
