@@ -8,9 +8,6 @@
 #include <string>
 #include <cstdlib>
 #include <algorithm>
-#include <map>
-#include <fstream>
-#include <iostream>
 
 #include <openvr.h>
 
@@ -22,6 +19,7 @@
 #include "Shader.h"
 #include "Camera.h"
 #include "Model.h"
+#include "Ray.h"
 
 // GLM Mathemtics
 #include <glm/glm.hpp>
@@ -31,24 +29,59 @@
 // Other Libs
 #include <SOIL.h>
 
-#include <ft2build.h>
-#include FT_FREETYPE_H
+
+//lujie
+//global
+vector<Model> modellist;
 
 
-GLfloat g_up = 0, g_left = 0, g_forward = 0;   // use for test 
-GLfloat g_angle = 0; // use for test;
-GLfloat g_text_scale = 0.001f;
-Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 GLuint loadTexture(GLchar* path);
 GLuint loadCubemap(std::vector<const GLchar*> faces);
-glm::vec3 modelPos2 = glm::vec3(0.0f, 0.541f, 0.0f);
-glm::vec3 modelPos1 = glm::vec3(0.0f, -0.541f, 0.0f);
-GLfloat g_textRectify_scale = 0.0012f;
-glm::vec3 g_textRectify1 = glm::vec3(-0.22f, 0.14f, -0.939999f);
-GLfloat g_textRectify_angle1 = 0.0f;
-glm::vec3 g_textRectify2 = glm::vec3(0.44f, 0.04f, -0.879999f);
-GLfloat g_textRectify_angle2 = 1.54f;
 
+//GLfloat skyboxVertices[] = {
+//	// Positions
+//	-1.0f, 1.0f, -1.0f,
+//	-1.0f, -1.0f, -1.0f,
+//	1.0f, -1.0f, -1.0f,
+//	1.0f, -1.0f, -1.0f,
+//	1.0f, 1.0f, -1.0f,
+//	-1.0f, 1.0f, -1.0f,
+//
+//	-1.0f, -1.0f, 1.0f,
+//	-1.0f, -1.0f, -1.0f,
+//	-1.0f, 1.0f, -1.0f,
+//	-1.0f, 1.0f, -1.0f,
+//	-1.0f, 1.0f, 1.0f,
+//	-1.0f, -1.0f, 1.0f,
+//
+//	1.0f, -1.0f, -1.0f,
+//	1.0f, -1.0f, 1.0f,
+//	1.0f, 1.0f, 1.0f,
+//	1.0f, 1.0f, 1.0f,
+//	1.0f, 1.0f, -1.0f,
+//	1.0f, -1.0f, -1.0f,
+//
+//	-1.0f, -1.0f, 1.0f,
+//	-1.0f, 1.0f, 1.0f,
+//	1.0f, 1.0f, 1.0f,
+//	1.0f, 1.0f, 1.0f,
+//	1.0f, -1.0f, 1.0f,
+//	-1.0f, -1.0f, 1.0f,
+//
+//	-1.0f, 1.0f, -1.0f,
+//	1.0f, 1.0f, -1.0f,
+//	1.0f, 1.0f, 1.0f,
+//	1.0f, 1.0f, 1.0f,
+//	-1.0f, 1.0f, 1.0f,
+//	-1.0f, 1.0f, -1.0f,
+//
+//	-1.0f, -1.0f, -1.0f,
+//	-1.0f, -1.0f, 1.0f,
+//	1.0f, -1.0f, -1.0f,
+//	1.0f, -1.0f, -1.0f,
+//	-1.0f, -1.0f, 1.0f,
+//	1.0f, -1.0f, 1.0f
+//};
 
 GLfloat skyboxVertices[] = {
 	// Positions
@@ -95,35 +128,59 @@ GLfloat skyboxVertices[] = {
 	5.0f, -5.0f, 5.0f
 };
 
-/// Holds all state information relevant to a character as loaded using FreeType
-struct Character {
-	GLuint TextureID;   // ID handle of the glyph texture
-	glm::ivec2 Size;    // Size of glyph
-	glm::ivec2 Bearing;  // Offset from baseline to left/top of glyph
-	GLuint Advance;    // Horizontal offset to advance to next glyph
-};
+//GLfloat skyboxVertices[] = {
+//	// Positions
+//	-5.0f, 10.0f, -5.0f,
+//	-5.0f, 0.0f, -5.0f,
+//	5.0f, 0.0f, -5.0f,
+//	5.0f, 0.0f, -5.0f,
+//	5.0f, 10.0f, -5.0f,
+//	-5.0f, 10.0f, -5.0f,
+//
+//	-5.0f, 0.0f, 5.0f,
+//	-5.0f, 0.0f, -5.0f,
+//	-5.0f, 10.0f, -5.0f,
+//	-5.0f, 10.0f, -5.0f,
+//	-5.0f, 10.0f, 5.0f,
+//	-5.0f, 0.0f, 5.0f,
+//
+//	5.0f, 0.0f, -5.0f,
+//	5.0f, 0.0f, 5.0f,
+//	5.0f, 10.0f, 5.0f,
+//	5.0f, 10.0f, 5.0f,
+//	5.0f, 10.0f, -5.0f,
+//	5.0f, 0.0f, -5.0f,
+//
+//	-5.0f, 0.0f, 5.0f,
+//	-5.0f, 10.0f, 5.0f,
+//	5.0f, 10.0f, 5.0f,
+//	5.0f, 10.0f, 5.0f,
+//	5.0f, 0.0f, 5.0f,
+//	-5.0f, 0.0f, 5.0f,
+//
+//	-5.0f, 10.0f, -5.0f,
+//	5.0f, 10.0f, -5.0f,
+//	5.0f, 10.0f, 5.0f,
+//	5.0f, 10.0f, 5.0f,
+//	-5.0f, 10.0f, 5.0f,
+//	-5.0f, 10.0f, -5.0f,
+//
+//	-5.0f, 0.0f, -5.0f,
+//	-5.0f, 0.0f, 5.0f,
+//	5.0f, 0.0f, -5.0f,
+//	5.0f, 0.0f, -5.0f,
+//	-5.0f, 0.0f, 5.0f,
+//	5.0f, 0.0f, 5.0f
+//};
 
-std::map<GLchar, Character> Characters;
-
-bool saveLoc(void)
-{
-	std::ofstream wfile("loc.txt");
-	if (!wfile.is_open()){
-		printf("Impossible to open the file ! Are you in the right path ? See Tutorial 1 for details\n");
-		getchar();
-		return false;
-	}
-	wfile << "x (left): " << g_left << " y (up): " << g_up << " z (forward): " << g_forward << " scale: " << g_text_scale << "angle: " << g_angle << endl;
-}
-
-class CGLRenderModel
+class CGLRenderModel	 // Ä£ÐÍäÖÈ¾
 {
 public:
 	CGLRenderModel( const std::string & sRenderModelName );
 	~CGLRenderModel();
 
-	bool BInit( const vr::RenderModel_t & vrModel, const vr::RenderModel_TextureMap_t & vrDiffuseTexture );
-	void Cleanup();
+	bool BInit( const vr::RenderModel_t & vrModel, const vr::RenderModel_TextureMap_t & vrDiffuseTexture );		// Ä£ÐÍ³õÊ¼»¯
+	void Cleanup();																								// Ä£ÐÍ»º´æÇå³ý
 	void Draw();
 	const std::string & GetName() const { return m_sModelName; }
 
@@ -158,10 +215,12 @@ public:
 	void RunMainLoop();
 	bool HandleInput();
 	void ProcessVREvent( const vr::VREvent_t & event );
+	void ControllerButtonPress(vr::TrackedDeviceIndex_t unTrackedDeviceIndex);
+	void ControllerButtonPressHold(vr::TrackedDeviceIndex_t unTrackedDeviceIndex);
+	void ControllerButtoRelease(vr::TrackedDeviceIndex_t unTrackedDeviceIndex);
 	void RenderFrame();
 
 	bool SetupTexturemaps();
-
 
 	void SetupScene();
 	void AddCubeToScene( Matrix4 mat, std::vector<float> &vertdata );
@@ -182,7 +241,6 @@ public:
 	Matrix4 GetCurrentViewProjectionMatrix( vr::Hmd_Eye nEye );
 	Matrix4 GetCurrentProjectionMatrix(vr::Hmd_Eye nEye);
 	void UpdateHMDMatrixPose();
-	void RenderText(vr::Hmd_Eye nEye, std::string text, glm::vec3 txtrecpos, GLfloat angle, glm::vec3 rotateAxis);
 
 	Matrix4 ConvertSteamVRMatrixToMatrix4( const vr::HmdMatrix34_t &matPose );
 
@@ -191,6 +249,28 @@ public:
 
 	void SetupRenderModelForTrackedDevice( vr::TrackedDeviceIndex_t unTrackedDeviceIndex );
 	CGLRenderModel *FindOrLoadRenderModel( const char *pchRenderModelName );
+	
+	//just.luo-----------------------
+	void setMattoI(Matrix4 &t);
+	glm::vec4 MatrixMultVec(Matrix4& m, glm::vec4& rhs);
+	GLint my_m_nRenderModelMatrixLocation;
+	bool bechoosed;
+	Matrix4  T_Mat_temp{
+		1.0, 0.0, 0.0, 0.0,
+		0.0, 1.0, 0.0, 0.0,
+		0.0, 0.0, 1.0, 0.0,
+		0.0, 0.0, 0.0, 1.0
+	};//chen send me;
+	//Matrix4  T_Mat{
+	//	1.0, 0.0, 0.0, 0.0,
+	//	0.0, 1.0, 0.0, 0.0,
+	//	0.0, 0.0, 1.0, 0.0,
+	//	0.0, 0.0, 0.0, 1.0
+	//};//chen send me;
+	//vector<Model> ;
+	//Model model_choosed;//存被选中的model；
+	//Model model_null;//无model被选中
+	//-----------------------------------------
 
 private: 
 	bool m_bDebugOpenGL;
@@ -198,6 +278,16 @@ private:
 	bool m_bPerf;
 	bool m_bVblank;
 	bool m_bGlFinishHack;
+	bool m_rbShowTrackedDevice[ vr::k_unMaxTrackedDeviceCount ];
+	bool m_moveFlag;
+//chenxin//
+	struct MoveData
+	{	Matrix4 controllerStart;
+		Matrix4 controllerNext;
+		Model *model;							// the model should be moved
+	};
+	MoveData m_moveData;
+//chenxin//
 
 	vr::IVRSystem *m_pHMD;
 	vr::IVRRenderModels *m_pRenderModels;
@@ -205,7 +295,6 @@ private:
 	std::string m_strDisplay;
 	vr::TrackedDevicePose_t m_rTrackedDevicePose[ vr::k_unMaxTrackedDeviceCount ];
 	Matrix4 m_rmat4DevicePose[ vr::k_unMaxTrackedDeviceCount ];
-	bool m_rbShowTrackedDevice[ vr::k_unMaxTrackedDeviceCount ];
 
 private: // SDL bookkeeping
 	SDL_Window *m_pWindow;
@@ -299,15 +388,15 @@ private: // OpenGL bookkeeping
 
 	std::vector< CGLRenderModel * > m_vecRenderModels;
 	CGLRenderModel *m_rTrackedDeviceToRenderModel[ vr::k_unMaxTrackedDeviceCount ];
-	Model ourModel;
-	Model ourModel1;
-	Model ourModel2;
+	//just.luo--------------
+	Model model1;
+	Model model2;
+	Model model3;
+	//---------------------------------
 	Shader shader;
-	Shader textShader;
 	Shader skyboxShader;
 	GLuint skyboxTexture;
 	GLuint skyboxVAO, skyboxVBO;
-	GLuint textVAO, textVBO;
 };
 
 //-----------------------------------------------------------------------------
@@ -429,6 +518,11 @@ std::string GetTrackedDeviceString( vr::IVRSystem *pHmd, vr::TrackedDeviceIndex_
 //-----------------------------------------------------------------------------
 bool CMainApplication::BInit()
 {
+	//just.luo--------------------------------------------------
+	bechoosed = false; 
+	//model_choosed = model_null;
+	//setMattoI(T_Mat);
+	//--------------------------------------------------
 	if ( SDL_Init( SDL_INIT_VIDEO | SDL_INIT_TIMER ) < 0 )
 	{
 		printf("%s - SDL could not initialize! SDL Error: %s\n", __FUNCTION__, SDL_GetError());
@@ -546,7 +640,7 @@ bool CMainApplication::BInit()
 //-----------------------------------------------------------------------------
 // Purpose:
 //-----------------------------------------------------------------------------
-void APIENTRY DebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const char* message, const void* userParam)
+void APIENTRY DebugCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const char* message, void* userParam)
 {
 	dprintf( "GL Error: %s\n", message );
 }
@@ -567,7 +661,6 @@ bool CMainApplication::BInitGL()
 	if (!CreateAllShaders())
 		return false;
 
-	// configure for cubemap
 	glGenVertexArrays(1, &skyboxVAO);
 	glGenBuffers(1, &skyboxVBO);
 	glBindVertexArray(skyboxVAO);
@@ -577,30 +670,25 @@ bool CMainApplication::BInitGL()
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
 	glBindVertexArray(0);
 
-	// Configure VAO/VBO for texture quads
-	glGenVertexArrays(1, &textVAO);
-	glGenBuffers(1, &textVBO);
-	glBindVertexArray(textVAO);
-	glBindBuffer(GL_ARRAY_BUFFER, textVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLfloat) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(GLfloat), 0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
-
 	// enable face culling
-	/*glEnable(GL_CULL_FACE);
+	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	glFrontFace(GL_CCW);
-	*/
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	SetupCameras();
 	
-	//ourModel = Model("./bottletable3/museum.obj");
-	ourModel = Model("./obj/fanglei.obj");
-	ourModel1 = Model("./obj/jade.obj");
-	ourModel2 = Model("./obj/table.obj");
+	//just.luo-------------------------------
+	//model1 = Model("./obj/ding.obj");
+	//model1 = Model("./bottletaleseparate/jade.obj");
+	model2 = Model("./bottletaleseparate/jade.obj");
+	model1 = Model("./obj/fanglei.obj");
+	model3 = Model("./obj/table.obj");
+	modellist.push_back(model1);
+	modellist.push_back(model2);
+	modellist.push_back(model3);
+	
+	//inputmodel
+	//---------------------------------------------------------------
 
 	// Cubemap (Skybox)
 	std::vector<const GLchar*> faces;
@@ -732,23 +820,15 @@ bool CMainApplication::HandleInput()
 		}
 		else if ( sdlEvent.type == SDL_KEYDOWN )
 		{
-			if ( sdlEvent.key.keysym.sym == SDLK_ESCAPE)
+			if ( sdlEvent.key.keysym.sym == SDLK_ESCAPE 
+			     || sdlEvent.key.keysym.sym == SDLK_q )
 			{
 				bRet = true;
 			}
-		}
-		switch (sdlEvent.key.keysym.sym){
-		case SDLK_q:g_up += 0.01; break;
-		case SDLK_w:g_up -= 0.01; break;
-		case SDLK_a:g_left -= 0.01; break;
-		case SDLK_s:g_left += 0.01; break;
-		case SDLK_z:g_forward -= 0.01; break;
-		case SDLK_x:g_forward += 0.01; break;
-		case SDLK_r:g_angle += 0.02; break;
-		case SDLK_t:g_angle -= 0.02; break;
-		case SDLK_f:g_text_scale += 0.0001; break;
-		case SDLK_g:g_text_scale -= 0.0001; break;
-		case SDLK_c:saveLoc(); break;
+			if( sdlEvent.key.keysym.sym == SDLK_c )
+			{
+				m_bShowCubes = !m_bShowCubes;
+			}
 		}
 	}
 
@@ -759,13 +839,19 @@ bool CMainApplication::HandleInput()
 		ProcessVREvent( event );
 	}
 
+
+	//chenxin
 	// Process SteamVR controller state
 	for( vr::TrackedDeviceIndex_t unDevice = 0; unDevice < vr::k_unMaxTrackedDeviceCount; unDevice++ )
 	{
 		vr::VRControllerState_t state;
 		if( m_pHMD->GetControllerState( unDevice, &state ) )
 		{
-			m_rbShowTrackedDevice[ unDevice ] = state.ulButtonPressed == 0;
+			m_rbShowTrackedDevice[ unDevice ] = state.ulButtonPressed == 0;		// °´¼ü  °´ÏÂ·¢ÉúÊ²Ã´£¿
+			if (state.ulButtonPressed == vr::ButtonMaskFromId(vr::k_EButton_SteamVR_Trigger))
+			{
+				ControllerButtonPressHold(unDevice);
+			}
 		}
 	}
 
@@ -784,9 +870,9 @@ void CMainApplication::RunMainLoop()
 
 	while ( !bQuit )
 	{
-		bQuit = HandleInput();
+		bQuit = HandleInput();				// ´¦ÀíÊäÈë
 
-		RenderFrame();
+		RenderFrame();						// äÖÈ¾Ã¿Ö¡
 	}
 
 	SDL_StopTextInput();
@@ -816,6 +902,17 @@ void CMainApplication::ProcessVREvent( const vr::VREvent_t & event )
 			dprintf( "Device %u updated.\n", event.trackedDeviceIndex );
 		}
 		break;
+	case vr::VREvent_ButtonPress:
+		{
+			ControllerButtonPress(event.trackedDeviceIndex);
+		}
+		break;
+	case vr::VREvent_ButtonUnpress:
+		{
+			ControllerButtoRelease(event.trackedDeviceIndex);
+		}
+			break;
+
 	}
 }
 
@@ -829,6 +926,7 @@ void CMainApplication::RenderFrame()
 	if ( m_pHMD )
 	{
 		DrawControllers();
+
 		RenderStereoTargets();
 		RenderDistortion();
 
@@ -876,6 +974,7 @@ void CMainApplication::RenderFrame()
 		dprintf( "PoseCount:%d(%s) Controllers:%d\n", m_iValidPoseCount, m_strPoseClasses.c_str(), m_iTrackedControllerCount );
 	}
 
+	///////////////////////////////////////////////////////////////////////
 	UpdateHMDMatrixPose();
 }
 
@@ -946,69 +1045,7 @@ bool CMainApplication::CreateAllShaders()
 {
 	shader = Shader("./shader.vs", "./shader.frag");
 	skyboxShader = Shader("skybox.vs", "skybox.frag");
-	textShader = Shader("./text.vs", "./text.frag");
 
-	// FreeType
-	FT_Library ft;
-	// All functions return a value different than 0 whenever an error occurred
-	if (FT_Init_FreeType(&ft))
-		std::cout << "ERROR::FREETYPE: Could not init FreeType Library" << std::endl;
-
-	// Load font as face
-	FT_Face face;
-	if (FT_New_Face(ft, "./times.ttf", 0, &face))
-		std::cout << "ERROR::FREETYPE: Failed to load font" << std::endl;
-
-	// Set size to load glyphs as
-	FT_Set_Pixel_Sizes(face, 0, 48);
-
-	// Disable byte-alignment restriction
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-	// Load first 128 characters of ASCII set
-	for (GLubyte c = 0; c < 128; c++)
-	{
-		// Load character glyph
-		if (FT_Load_Char(face, c, FT_LOAD_RENDER))
-		{
-			std::cout << "ERROR::FREETYTPE: Failed to load Glyph" << std::endl;
-			continue;
-		}
-		// Generate texture
-		GLuint texture;
-		glGenTextures(1, &texture);
-		glBindTexture(GL_TEXTURE_2D, texture);
-		glTexImage2D(
-			GL_TEXTURE_2D,
-			0,
-			GL_RED,
-			face->glyph->bitmap.width,
-			face->glyph->bitmap.rows,
-			0,
-			GL_RED,
-			GL_UNSIGNED_BYTE,
-			face->glyph->bitmap.buffer
-			);
-		// Set texture options
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		// Now store character for later use
-		Character character = {
-			texture,
-			glm::ivec2(face->glyph->bitmap.width, face->glyph->bitmap.rows),
-			glm::ivec2(face->glyph->bitmap_left, face->glyph->bitmap_top),
-			face->glyph->advance.x
-		};
-		Characters.insert(std::pair<GLchar, Character>(c, character));
-	}
-	glBindTexture(GL_TEXTURE_2D, 0);
-	// Destroy FreeType once we're finished
-	FT_Done_Face(face);
-	FT_Done_FreeType(ft);
-
-	
 	m_unControllerTransformProgramID = CompileGLShader(
 		"Controller",
 
@@ -1042,10 +1079,11 @@ bool CMainApplication::CreateAllShaders()
 
 	m_unRenderModelProgramID = CompileGLShader( 
 		"render model",
-
+		//just.luo--------------------
 		// vertex shader
 		"#version 410\n"
 		"uniform mat4 matrix;\n"
+		//"uniform mat4 translation;\n"
 		"layout(location = 0) in vec4 position;\n"
 		"layout(location = 1) in vec3 v3NormalIn;\n"
 		"layout(location = 2) in vec2 v2TexCoordsIn;\n"
@@ -1053,9 +1091,9 @@ bool CMainApplication::CreateAllShaders()
 		"void main()\n"
 		"{\n"
 		"	v2TexCoord = v2TexCoordsIn;\n"
-		"	gl_Position = matrix * vec4(position.xyz, 1);\n"
+		"	gl_Position = matrix * vec4(position.xyz, 1);\n"//IMPORTANT
 		"}\n",
-
+		//------------------------------------
 		//fragment shader
 		"#version 410 core\n"
 		"uniform sampler2D diffuse;\n"
@@ -1068,6 +1106,7 @@ bool CMainApplication::CreateAllShaders()
 
 		);
 	m_nRenderModelMatrixLocation = glGetUniformLocation( m_unRenderModelProgramID, "matrix" );
+
 	if( m_nRenderModelMatrixLocation == -1 )
 	{
 		dprintf( "Unable to find matrix uniform in render model shader\n" );
@@ -1154,7 +1193,7 @@ void CMainApplication::DrawControllers()
 
 		const Matrix4 & mat = m_rmat4DevicePose[unTrackedDevice];
 
-		Vector4 center = mat * Vector4( 0, 0, 0, 1 );
+		Vector4 center = mat * Vector4( 0, 0, 0, 1 );    // centerÎª¿ØÖÆÆ÷ÖÐÐÄÎ»ÖÃ
 
 		for ( int i = 0; i < 3; ++i )
 		{
@@ -1223,6 +1262,7 @@ void CMainApplication::DrawControllers()
 	{
 		//$ TODO: Use glBufferSubData for this...
 		glBufferData( GL_ARRAY_BUFFER, sizeof(float) * vertdataarray.size(), &vertdataarray[0], GL_STREAM_DRAW );
+
 	}
 }
 
@@ -1503,29 +1543,29 @@ void CMainApplication::RenderScene( vr::Hmd_Eye nEye )
 		glDepthFunc(GL_LESS); // Set depth function back to default
 
 		shader.Use();
-		//glm::mat4 trans1;   // trans to the center
-		//trans1 = glm::translate(trans1, modelPos1);
-		//glm::mat4 trans2;   // trans back
-		//trans2 = glm::translate(trans2, modelPos2);
-		//glm::mat4 rotate;
-		//rotate = glm::rotate(rotate, g_angle, glm::vec3(0.0, 1.0, 0.0));
-		//glm::mat4 trans3;   // new trans
-		//trans3 = glm::translate(trans3, glm::vec3(g_left, g_up, g_forward));
-		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "matrix"), 1, GL_FALSE, GetCurrentViewProjectionMatrix(nEye).get());
-		/*glUniformMatrix4fv(glGetUniformLocation(shader.Program, "trans1"), 1, GL_FALSE, glm::value_ptr(trans1));
-		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "trans2"), 1, GL_FALSE, glm::value_ptr(trans2));
-		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "trans3"), 1, GL_FALSE, glm::value_ptr(trans3));
-		glUniformMatrix4fv(glGetUniformLocation(shader.Program, "rotate"), 1, GL_FALSE, glm::value_ptr(rotate));*/
-		ourModel.Draw(shader);
-		ourModel1.Draw(shader);
-		ourModel2.Draw(shader);
+		//just.luo---------------
 
+		if (bechoosed ==false)
+		{
+			setMattoI(T_Mat_temp);
+		}
+		
+		for (int  i = 0; i < modellist.size(); i++)
+		{
+			if (modellist[i].bechoosed)
+			{
+				glUniformMatrix4fv(glGetUniformLocation(shader.Program, "matrix"), 1, GL_FALSE, (GetCurrentViewProjectionMatrix(nEye)*T_Mat_temp*modellist[i].move_data).get());//IMPORTANT takecare
+				
+			}
+			else
+			{
+				glUniformMatrix4fv(glGetUniformLocation(shader.Program, "matrix"), 1, GL_FALSE, (GetCurrentViewProjectionMatrix(nEye)*modellist[i].move_data).get());
 
+			}
+			modellist[i].Draw(shader);
 
-		std::string text1 = "|<---Length: 10cm--->|";
-		RenderText(nEye, text1, g_textRectify1, g_textRectify_angle1, glm::vec3(0.0f, 0.0f, 1.0f));
-		std::string text2 = "|<--------                Height: 53cm                -------->|";
-		RenderText(nEye, text2, glm::vec3(g_left, g_up, g_forward), g_angle, glm::vec3(0.0f, 0.0f, 1.0f));
+		}
+
 	}
 
 	bool bIsInputCapturedByAnotherProcess = m_pHMD->IsInputFocusCapturedByAnotherProcess();
@@ -1534,10 +1574,13 @@ void CMainApplication::RenderScene( vr::Hmd_Eye nEye )
 	{
 		// draw the controller axis lines
 		glUseProgram( m_unControllerTransformProgramID );
-		glUniformMatrix4fv( m_nControllerMatrixLocation, 1, GL_FALSE, GetCurrentViewProjectionMatrix( nEye ).get() );
-		glBindVertexArray( m_unControllerVAO );
-		glDrawArrays( GL_LINES, 0, m_uiControllerVertcount );
-		glBindVertexArray( 0 );
+		glUniformMatrix4fv( m_nControllerMatrixLocation, 1, GL_FALSE, GetCurrentViewProjectionMatrix( nEye ).get() );	// Í³Ò»ÊÓ½Ç
+		glBindVertexArray( m_unControllerVAO );								// bind the vertex array(VAO) with something to draw
+		glDrawArrays( GL_LINES, 0, m_uiControllerVertcount );				
+		glBindVertexArray( 0 );												// release the VAO
+		// you can change the controller model there
+		// /chenxin/ //
+
 	}
 
 	// ----- Render Model rendering -----
@@ -1642,16 +1685,18 @@ Matrix4 CMainApplication::GetHMDMatrixPoseEye( vr::Hmd_Eye nEye )
 //-----------------------------------------------------------------------------
 Matrix4 CMainApplication::GetCurrentViewProjectionMatrix( vr::Hmd_Eye nEye )
 {
+	//just.luo----------------------------
 	Matrix4 matMVP;
 	if( nEye == vr::Eye_Left )
 	{
 		matMVP = m_mat4ProjectionLeft * m_mat4eyePosLeft * m_mat4HMDPose;
+
 	}
 	else if( nEye == vr::Eye_Right )
 	{
 		matMVP = m_mat4ProjectionRight * m_mat4eyePosRight *  m_mat4HMDPose;
 	}
-
+	//----------------------------------------------------------
 	return matMVP;
 }
 
@@ -1672,7 +1717,7 @@ Matrix4 CMainApplication::GetCurrentProjectionMatrix(vr::Hmd_Eye nEye)
 
 
 //-----------------------------------------------------------------------------
-// Purpose:
+// Purpose:  
 //-----------------------------------------------------------------------------
 void CMainApplication::UpdateHMDMatrixPose()
 { 
@@ -1786,66 +1831,6 @@ void CMainApplication::SetupRenderModelForTrackedDevice( vr::TrackedDeviceIndex_
 	}
 }
 
-void CMainApplication::RenderText(vr::Hmd_Eye nEye, std::string text, glm::vec3 txtrecpos = glm::vec3(0.0f, 0.0f, 0.0f), GLfloat angle = 0, glm::vec3 rotateAxis = glm::vec3(0.0f, 1.0f, 0.0f))
-{
-	GLfloat x = 0.0f;
-	GLfloat y = 1.0f;
-	GLfloat scale = g_text_scale;
-	glm::vec3 color = glm::vec3(1.0f, 1.0f, 0.0f);
-
-	// Activate corresponding render state
-	textShader.Use();
-	glUniform3f(glGetUniformLocation(textShader.Program, "textColor"), color.x, color.y, color.z);
-
-	glUniformMatrix4fv(glGetUniformLocation(textShader.Program, "matrix"), 1, GL_FALSE, GetCurrentViewProjectionMatrix(nEye).get());
-
-	glm::mat4 rotate;
-	rotate = glm::rotate(rotate, angle, rotateAxis);
-	glm::mat4 trans;   // new trans
-	trans = glm::translate(trans, txtrecpos);
-	glUniformMatrix4fv(glGetUniformLocation(textShader.Program, "trans"), 1, GL_FALSE, glm::value_ptr(trans));
-	glUniformMatrix4fv(glGetUniformLocation(textShader.Program, "rotate"), 1, GL_FALSE, glm::value_ptr(rotate));
-
-	//glUniform3f(glGetUniformLocation(shader.Program, "textColor"), color.x, color.y, color.z);
-	//glActiveTexture(GL_TEXTURE0);
-	glBindVertexArray(textVAO);
-
-	// Iterate through all characters
-	std::string::const_iterator c;
-	for (c = text.begin(); c != text.end(); c++)
-	{
-		Character ch = Characters[*c];
-
-		GLfloat xpos = x + ch.Bearing.x * scale;
-		GLfloat ypos = y - (ch.Size.y - ch.Bearing.y) * scale;
-
-		GLfloat w = ch.Size.x * scale;
-		GLfloat h = ch.Size.y * scale;
-		// Update VBO for each character
-		GLfloat vertices[6][4] = {
-			{ xpos, ypos + h, 0.0, 0.0 },
-			{ xpos, ypos, 0.0, 1.0 },
-			{ xpos + w, ypos, 1.0, 1.0 },
-
-			{ xpos, ypos + h, 0.0, 0.0 },
-			{ xpos + w, ypos, 1.0, 1.0 },
-			{ xpos + w, ypos + h, 1.0, 0.0 }
-		};
-		// Render glyph texture over quad
-		glBindTexture(GL_TEXTURE_2D, ch.TextureID);
-		// Update content of VBO memory
-		glBindBuffer(GL_ARRAY_BUFFER, textVBO);
-		glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices); // Be sure to use glBufferSubData and not glBufferData
-
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		// Render quad
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-		// Now advance cursors for next glyph (note that advance is number of 1/64 pixels)
-		x += (ch.Advance >> 6) * scale; // Bitshift by 6 to get value in pixels (2^6 = 64 (divide amount of 1/64th pixels by 64 to get amount of pixels))
-	}
-	glBindVertexArray(0);
-	glBindTexture(GL_TEXTURE_2D, 0);
-}
 
 //-----------------------------------------------------------------------------
 // Purpose: Create/destroy GL Render Models
@@ -1882,7 +1867,166 @@ Matrix4 CMainApplication::ConvertSteamVRMatrixToMatrix4( const vr::HmdMatrix34_t
 	return matrixObj;
 }
 
+//-----------------------------------------------------------------------------
+// Purpose: Use controller to move the object
+//-----------------------------------------------------------------------------
+//chenxin//
+void CMainApplication::ControllerButtonPress(vr::TrackedDeviceIndex_t unTrackedDevice)
+{
+	if (!m_pHMD->IsTrackedDeviceConnected(unTrackedDevice))										// make sure the controller is connected
+		return;
+	if (m_pHMD->GetTrackedDeviceClass(unTrackedDevice) != vr::TrackedDeviceClass_Controller)	// make sure the tracked device is controller
+		return;
+	if (!m_rTrackedDevicePose[unTrackedDevice].bPoseIsValid)									// make sure the position of controller is valid
+		return;
+		
+	const Matrix4 & mat = m_rmat4DevicePose[unTrackedDevice];									// get the position controller 
+	Vector4 center = mat * Vector4(0, 0, 0, 1);
+	Vector3	controllerPosi(center[0], center[1], center[2]);									// translation
 
+	Vector4 pose = mat * Vector4(0, 0, 1, 0);													
+	Vector3	controllerPose(pose[0], pose[1], pose[2]);
+	
+	m_pHMD->TriggerHapticPulse(unTrackedDevice, 0, 1000);									// generate trigger haptic pulse when user pitch on the object 
+	m_moveData.controllerStart=mat;													// when object moving hold this distance
+	m_moveFlag = true;																		// user can move object
+	bechoosed = true;
+	Ray rc(controllerPosi, -controllerPose);
+	
+	if (rc.trace_ray())
+	{
+		modellist[rc.finalindex].bechoosed = true;
+		
+	}
+
+	/*
+	//float smallNum = 0.000000001;
+	float lanmeda;
+	for (int i = 0; i < modellist.size(); i++)
+	{
+
+		//if (controllerPose[0] == 0 || controllerPose[1] == 0 || controllerPose[2] == 0)
+		//{
+		//	controllerPose = controllerPose + Vector3(smallNum, smallNum, smallNum);
+		//}
+		// x max
+		lanmeda = (center[0] - modellist[i].boundingBox.maxVertex[0]) / controllerPose[0];
+		if (   (center[1] - lanmeda*controllerPose[1]) < modellist[i].boundingBox.maxVertex[1]
+			&&(center[1] - lanmeda*controllerPose[1])> modellist[i].boundingBox.minVertex[1]
+			&&(center[2] - lanmeda*controllerPose[2])< modellist[i].boundingBox.maxVertex[2]
+			&&(center[2] - lanmeda*controllerPose[2])> modellist[i].boundingBox.minVertex[2])
+		{
+			modellist[i].bechoosed = true;
+		}
+		cout << (center[1] - lanmeda*controllerPose[1]) << "  "<<(center[2] - lanmeda*controllerPose[2]) <<endl ;
+		// x min
+		lanmeda = (center[0] - modellist[i].boundingBox.minVertex[0]) / controllerPose[0];
+		if (   (center[1] - lanmeda*controllerPose[1]) < modellist[i].boundingBox.maxVertex[1]
+			&& (center[1] - lanmeda*controllerPose[1]) > modellist[i].boundingBox.minVertex[1]
+			&& (center[2] - lanmeda*controllerPose[2]) < modellist[i].boundingBox.maxVertex[2]
+			&& (center[2] - lanmeda*controllerPose[2]) > modellist[i].boundingBox.minVertex[2])
+		{
+			modellist[i].bechoosed = true;
+		}
+		cout << (center[1] - lanmeda*controllerPose[1]) << "  " << (center[2] - lanmeda*controllerPose[2]) << endl;
+		// y max
+		lanmeda = (center[1] - modellist[i].boundingBox.maxVertex[1]) / controllerPose[1];
+		if (   (center[0] - lanmeda*controllerPose[0]) < modellist[i].boundingBox.maxVertex[0]
+			&& (center[0] - lanmeda*controllerPose[0]) > modellist[i].boundingBox.minVertex[0]
+			&& (center[2] - lanmeda*controllerPose[2]) < modellist[i].boundingBox.maxVertex[2]
+			&& (center[2] - lanmeda*controllerPose[2]) > modellist[i].boundingBox.minVertex[2])
+		{
+			modellist[i].bechoosed = true;
+		}
+		cout << (center[0] - lanmeda*controllerPose[0]) << "  " << (center[2] - lanmeda*controllerPose[2]) << endl;
+		// y min
+		lanmeda = (center[1] - modellist[i].boundingBox.minVertex[1]) / controllerPose[1];
+		if (   (center[0] - lanmeda*controllerPose[0] )< modellist[i].boundingBox.maxVertex[0]
+			&& (center[0] - lanmeda*controllerPose[0] )> modellist[i].boundingBox.minVertex[0]
+			&& (center[2] - lanmeda*controllerPose[2] )< modellist[i].boundingBox.maxVertex[2]
+			&& (center[2] - lanmeda*controllerPose[2] )> modellist[i].boundingBox.minVertex[2])
+		{
+			modellist[i].bechoosed = true;
+		}
+		cout << (center[0] - lanmeda*controllerPose[0]) << "  " << (center[2] - lanmeda*controllerPose[2]) << endl;
+		// z max
+		lanmeda = (center[2] - modellist[i].boundingBox.maxVertex[2]) / controllerPose[2];
+		if (   (center[0] - lanmeda*controllerPose[0]) < modellist[i].boundingBox.maxVertex[0]
+			&& (center[0] - lanmeda*controllerPose[0]) > modellist[i].boundingBox.minVertex[0]
+			&& (center[1] - lanmeda*controllerPose[1]) < modellist[i].boundingBox.maxVertex[1]
+			&& (center[1] - lanmeda*controllerPose[1]) > modellist[i].boundingBox.minVertex[1])
+		{
+			modellist[i].bechoosed = true;
+		}
+		cout << (center[1] - lanmeda*controllerPose[1]) << "  " << (center[0] - lanmeda*controllerPose[0]) << endl;
+		//z min
+		lanmeda = (center[2] - modellist[i].boundingBox.minVertex[2]) / controllerPose[2];
+		if (   (center[0] - lanmeda*controllerPose[0]) < modellist[i].boundingBox.maxVertex[0]
+			&& (center[0] - lanmeda*controllerPose[0]) > modellist[i].boundingBox.minVertex[0]
+			&& (center[1] - lanmeda*controllerPose[1]) < modellist[i].boundingBox.maxVertex[1]
+			&& (center[1] - lanmeda*controllerPose[1]) > modellist[i].boundingBox.minVertex[1])
+		{
+			modellist[i].bechoosed = true;
+		}
+		cout << (center[1] - lanmeda*controllerPose[1]) << "  " << (center[0] - lanmeda*controllerPose[0]) << endl;
+		cout << endl;
+		cout << endl;
+
+	}
+	*/
+	//modellist[0].bechoosed = true;
+}
+
+void CMainApplication::ControllerButtonPressHold(vr::TrackedDeviceIndex_t unTrackedDevice)
+{
+	const Matrix4 & mat = m_rmat4DevicePose[unTrackedDevice];									// get the position controller 
+	//cout << "pos" << mat<<endl;
+	//m_moveData.controllerNext.setColumn(mat);													// when object moving hold this distance
+	m_moveData.controllerNext=mat;													// when object moving hold this distance
+	//T_Mat_temp = m_moveData.controllerNext * m_moveData.controllerStart.invertGeneral();				//important
+	//Matrix4 invert_ = m_moveData.controllerStart.invert();
+	T_Mat_temp = m_moveData.controllerNext * m_moveData.controllerStart.invert();				//important
+	//cout << "start" << endl << m_moveData.controllerStart<< endl;
+	//cout << "next " << endl << m_moveData.controllerNext<< endl;
+	m_moveData.controllerStart.invert();
+	
+	
+	
+	//cout << "inver" << endl << m_moveData.controllerStart.invert() << endl;
+	//cout << "TMAT_temp " << endl << T_Mat_temp<< endl;
+	//m_moveData.controllerStart.setColumn(m_moveData.controllerNext)
+	//Vector4 translantion = (m_moveData.controllerNext - m_moveData.controllerStart)*Vector4(0, 0, 0, 1);
+	//Vector4 center = mat * Vector4(0, 0, 0, 1);
+
+}
+
+
+void CMainApplication::ControllerButtoRelease(vr::TrackedDeviceIndex_t unTrackedDevice)
+{
+	for (int i = 0; i < modellist.size(); i++)
+	{
+		if (modellist[i].bechoosed)
+		{
+			modellist[i].move_data = T_Mat_temp*modellist[i].move_data;			//takecare
+			modellist[i].boundingBox.v1 = MatrixMultVec(T_Mat_temp, modellist[i].boundingBox.v1);
+			modellist[i].boundingBox.v2 = MatrixMultVec(T_Mat_temp, modellist[i].boundingBox.v2);
+			modellist[i].boundingBox.v3 = MatrixMultVec(T_Mat_temp, modellist[i].boundingBox.v3);
+			modellist[i].boundingBox.v4 = MatrixMultVec(T_Mat_temp, modellist[i].boundingBox.v4);
+
+			modellist[i].boundingBox.v5 = MatrixMultVec(T_Mat_temp, modellist[i].boundingBox.v5);
+			modellist[i].boundingBox.v6 = MatrixMultVec(T_Mat_temp, modellist[i].boundingBox.v6);
+			modellist[i].boundingBox.v7 = MatrixMultVec(T_Mat_temp, modellist[i].boundingBox.v7);
+			modellist[i].boundingBox.v8 = MatrixMultVec(T_Mat_temp, modellist[i].boundingBox.v8);
+
+			modellist[i].bechoosed = false;
+
+		}
+
+	}
+	setMattoI(T_Mat_temp);
+	bechoosed = false;
+	RenderFrame();						// äÖÈ¾Ã¿Ö¡
+}
 //-----------------------------------------------------------------------------
 // Purpose: Create/destroy GL Render Models
 //-----------------------------------------------------------------------------
@@ -1908,15 +2052,15 @@ CGLRenderModel::~CGLRenderModel()
 bool CGLRenderModel::BInit( const vr::RenderModel_t & vrModel, const vr::RenderModel_TextureMap_t & vrDiffuseTexture )
 {
 	// create and bind a VAO to hold state for this model
-	glGenVertexArrays( 1, &m_glVertArray );
-	glBindVertexArray( m_glVertArray );
+	glGenVertexArrays( 1, &m_glVertArray );			 // Éú³É¶¥µã¾ØÕó
+	glBindVertexArray( m_glVertArray );				 // ¹¹½¨¶¥µã¾ØÕó
 
 	// Populate a vertex buffer
 	glGenBuffers( 1, &m_glVertBuffer );
 	glBindBuffer( GL_ARRAY_BUFFER, m_glVertBuffer );
 	glBufferData( GL_ARRAY_BUFFER, sizeof( vr::RenderModel_Vertex_t ) * vrModel.unVertexCount, vrModel.rVertexData, GL_STATIC_DRAW );
 
-	// Identify the components in the vertex buffer
+	// Identify the components in the vertex buffer		¹¹½¨¶¥µã»º´æÆ÷³É·Ö
 	glEnableVertexAttribArray( 0 );
 	glVertexAttribPointer( 0, 3, GL_FLOAT, GL_FALSE, sizeof( vr::RenderModel_Vertex_t ), (void *)offsetof( vr::RenderModel_Vertex_t, vPosition ) );
 	glEnableVertexAttribArray( 1 );
@@ -1924,21 +2068,20 @@ bool CGLRenderModel::BInit( const vr::RenderModel_t & vrModel, const vr::RenderM
 	glEnableVertexAttribArray( 2 );
 	glVertexAttribPointer( 2, 2, GL_FLOAT, GL_FALSE, sizeof( vr::RenderModel_Vertex_t ), (void *)offsetof( vr::RenderModel_Vertex_t, rfTextureCoord ) );
 
-	// Create and populate the index buffer
+	// Create and populate the index buffer				¹¹½¨Ö¸Õë»º´æ
 	glGenBuffers( 1, &m_glIndexBuffer );
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, m_glIndexBuffer );
 	glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof( uint16_t ) * vrModel.unTriangleCount * 3, vrModel.rIndexData, GL_STATIC_DRAW );
 
 	glBindVertexArray( 0 );
 
-	// create and populate the texture
+	// create and populate the texture					¹¹½¨ÌùÍ¼
 	glGenTextures(1, &m_glTexture );
 	glBindTexture( GL_TEXTURE_2D, m_glTexture );
 
 	glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, vrDiffuseTexture.unWidth, vrDiffuseTexture.unHeight,
 		0, GL_RGBA, GL_UNSIGNED_BYTE, vrDiffuseTexture.rubTextureMapData );
-
-	// If this renders black ask McJohn what's wrong.
+                 	// If this renders black ask McJohn what's wrong.
 	glGenerateMipmap(GL_TEXTURE_2D);
 
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
@@ -1963,11 +2106,11 @@ bool CGLRenderModel::BInit( const vr::RenderModel_t & vrModel, const vr::RenderM
 //-----------------------------------------------------------------------------
 void CGLRenderModel::Cleanup()
 {
-	if( m_glVertBuffer )
+	if( m_glVertBuffer )		
 	{
-		glDeleteBuffers(1, &m_glIndexBuffer);
-		glDeleteBuffers(1, &m_glVertArray);
-		glDeleteBuffers(1, &m_glVertBuffer);
+		glDeleteBuffers(1, &m_glIndexBuffer);			// Çå³ý»º´æ Ö¸Õë»º´æ
+		glDeleteBuffers(1, &m_glVertArray);				// ¶¥µãÏòÁ¿
+		glDeleteBuffers(1, &m_glVertBuffer);			// ¶¥µã»º´æ
 		m_glIndexBuffer = 0;
 		m_glVertArray = 0;
 		m_glVertBuffer = 0;
@@ -1978,7 +2121,7 @@ void CGLRenderModel::Cleanup()
 //-----------------------------------------------------------------------------
 // Purpose: Draws the render model
 //-----------------------------------------------------------------------------
-void CGLRenderModel::Draw()
+void CGLRenderModel::Draw()								// »­äÖÈ¾Ä£ÐÍ
 {
 	glBindVertexArray( m_glVertArray );
 
@@ -1998,7 +2141,7 @@ int main(int argc, char *argv[])
 {
 	CMainApplication *pMainApplication = new CMainApplication( argc, argv );
 
-	if (!pMainApplication->BInit())
+	if (!pMainApplication->BInit())						// ³õÊ¼»¯Ê§°Ü
 	{
 		pMainApplication->Shutdown();
 		return 1;
@@ -2068,4 +2211,23 @@ GLuint loadTexture(GLchar* path)
 	glBindTexture(GL_TEXTURE_2D, 0);
 	SOIL_free_image_data(image);
 	return textureID;
+}
+//just.luo--------------
+void CMainApplication::setMattoI( Matrix4 &b)
+{
+	Matrix4 a{
+		    1.0, 0.0, 0.0, 0.0,
+			0.0,1.0, 0.0,0.0,
+			0.0, 0.0,1.0, 0.0,
+			0.0, 0.0, 0.0, 1.0
+	};
+	b=a;
+}
+
+glm::vec4 CMainApplication::MatrixMultVec(Matrix4& m, glm::vec4& rhs)
+{
+	return glm::vec4(m[0] * rhs.x + m[4] * rhs.y + m[8] * rhs.z + m[12] * rhs.w,
+		             m[1] * rhs.x + m[5] * rhs.y + m[9] * rhs.z + m[13] * rhs.w,
+	               	 m[2] * rhs.x + m[6] * rhs.y + m[10] * rhs.z + m[14] * rhs.w,
+		             m[3] * rhs.x + m[7] * rhs.y + m[11] * rhs.z + m[15] * rhs.w);
 }
